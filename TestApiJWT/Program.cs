@@ -1,3 +1,5 @@
+using TestApiJWT.Helpers;
+
 namespace TestApiJWT
 {
     public class Program
@@ -12,6 +14,9 @@ namespace TestApiJWT
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Bind the JWT configuration section from appsettings.json to the JWT settings class
+            builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
 
             var app = builder.Build();
 
