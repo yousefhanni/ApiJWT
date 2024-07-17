@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using TestApiJWT.Data;
 using TestApiJWT.Helpers;
+using TestApiJWT.Models;
 
 namespace TestApiJWT
 {
@@ -17,6 +21,15 @@ namespace TestApiJWT
 
             // Bind the JWT configuration section from appsettings.json to the JWT settings class
             builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
+
+
+            // Add Identity services to the application
+            // IdentityRole: Represents a role in the ASP.NET Core Identity system
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
+
+            // Add DbContext for AppIdentity with SQL Server configuration
+            builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
 
             var app = builder.Build();
 
