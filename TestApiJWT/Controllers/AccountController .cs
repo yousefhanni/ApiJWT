@@ -16,6 +16,7 @@ namespace TestApiJWT.Controllers
             _authService = authService;
         }
 
+
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterModel model)
         {
@@ -27,8 +28,24 @@ namespace TestApiJWT.Controllers
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
-            return Ok(result);
+            return Ok(new { result.Username, result.Email, result.Roles, result.Token, result.ExpiresOn });
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.LoginAsync(model);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(new { result.Username, result.Email, result.Roles, result.Token, result.ExpiresOn });
+        }
+
+
 
 
     }

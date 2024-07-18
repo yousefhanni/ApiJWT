@@ -76,6 +76,38 @@ namespace TestApiJWT.Services
             };
         }
 
+        public async Task<AuthModel> LoginAsync(LoginModel model)
+        {
+            var authModel = new AuthModel();
+
+            // Find the user by their email
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            // If user is null or password is incorrect, return with an error message
+            if (user is null || !await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                authModel.Message = "Email or Password is incorrect!";
+                return authModel;
+            }
+
+            // Generate a JWT token for the authenticated user
+            var jwtSecurityToken = await CreateJwtToken(user);
+
+            // Get the list of roles assigned to the user
+            var rolesList = await _userManager.GetRolesAsync(user);
+
+            // Populate the authModel with successful login details
+            authModel.IsAuthenticated = true;
+            authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            authModel.Email = user.Email;
+            authModel.Username = user.UserName;
+            authModel.ExpiresOn = jwtSecurityToken.ValidTo;
+            authModel.Roles = rolesList.ToList();
+
+            return authModel;
+        }
+
+
         // Method to create a JWT token for the user
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
         {
