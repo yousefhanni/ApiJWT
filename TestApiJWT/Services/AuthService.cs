@@ -107,6 +107,26 @@ namespace TestApiJWT.Services
             return authModel;
         }
 
+        public async Task<string> AddRoleAsync(AddRoleModel model)
+        {
+            // Find the user by their ID
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            // Check if the user exists and the role exists
+            if (user is null || !await _roleManager.RoleExistsAsync(model.Role))
+                return "Invalid user ID or Role";
+
+            // Check if the user is already in the role
+            if (await _userManager.IsInRoleAsync(user, model.Role))
+                return "User already assigned to this role";
+
+            // Add the user to the role
+            var result = await _userManager.AddToRoleAsync(user, model.Role);
+
+            // Return the result of the operation
+            return result.Succeeded ? string.Empty : "Something went wrong";
+        }
+
 
         // Method to create a JWT token for the user
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)

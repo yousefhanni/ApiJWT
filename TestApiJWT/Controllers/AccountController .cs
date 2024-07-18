@@ -45,6 +45,23 @@ namespace TestApiJWT.Controllers
             return Ok(new { result.Username, result.Email, result.Roles, result.Token, result.ExpiresOn });
         }
 
+        [HttpPost("addrole")]
+        public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Call the service method to add the role to the user
+            var result = await _authService.AddRoleAsync(model);
+
+            // If there was an error, return a bad request with the error message
+            if (!string.IsNullOrEmpty(result))
+                return BadRequest(result);
+
+            // If successful, return OK with the model
+            return Ok(model);
+        }
+
 
 
 

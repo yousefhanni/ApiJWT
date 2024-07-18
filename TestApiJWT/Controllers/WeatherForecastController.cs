@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TestApiJWT.Controllers
 {
     [ApiController]
+    [Authorize(Roles ="Admin")]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
@@ -17,6 +19,7 @@ namespace TestApiJWT.Controllers
         {
             _logger = logger;
         }
+
 
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
